@@ -3,12 +3,13 @@ import numpy as np
 class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
-                forward_reward_cap: float = float("inf"),
+                #forward_reward_cap: float = float("inf"),
+                velocity_weight: float = 0.001,
                 distance_weight: float = 1.0,
                 # energy_weight=0.0005,
-                shake_weight: float = 0.005,
-                drift_weight: float = 1.5,
-                action_cost_weight: float = 0.02,
+                #shake_weight: float = 0.005,
+                drift_weight: float = 3,
+                #action_cost_weight: float = 0.02,
                 # deviation_weight: float = 1,
                 enable_roll_limit : bool = True,
                 healthy_roll_limit : float = np.pi * 1/2,
@@ -21,7 +22,8 @@ class WalkAlongX(object):
         """Initializes the task."""
 
         #self._forward_reward_cap = forward_reward_cap
-        self._action_cost_weight = action_cost_weight
+        #self._action_cost_weight = action_cost_weight
+        self._velocity_weight = velocity_weight
         self._distance_weight = distance_weight
         #self._shake_weight = shake_weight
         self._drift_weight = drift_weight
@@ -33,6 +35,8 @@ class WalkAlongX(object):
         #self.pitch_threshold = pitch_threshold
         self.enable_roll_limit = enable_roll_limit
         self.healthy_roll_limit = healthy_roll_limit
+
+        self.step_counter = 0
 
     def __call__(self, env):
         return self.reward(env)
@@ -52,6 +56,8 @@ class WalkAlongX(object):
         self._init_base_ori_euler = env.robot.GetTrueBaseRollPitchYaw()
         self._current_base_ori_euler = env.robot.GetTrueBaseRollPitchYaw()
 
+        self.step_counter = 0
+
     def update(self, env):
         """Updates the internal state of the task.
         Evoked after call to a1.A1.Step(), ie after action takes effect in simulation
@@ -64,6 +70,8 @@ class WalkAlongX(object):
         self._last_action = env.last_action
         
         self._current_base_ori_euler = env.robot.GetTrueBaseRollPitchYaw() 
+
+        self.step_counter += 1 
 
     def done(self, env):
         """Checks if the episode is over.
@@ -78,17 +86,17 @@ class WalkAlongX(object):
 
         # bug : -ve velocity along y is rewarded
         # velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
-        x_velocity_reward = self._current_base_vel[0]
-        forward_reward = self._distance_weight * self._current_base_pos[0] - self._init_base_pos[0]
-        displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
+        x_velocity_reward = self._velocity_weight * self._current_base_vel[0]
+        # forward_reward = self._distance_weight * self._current_base_pos[0] - self._init_base_pos[0]
+        # displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
 
-        y_velocity_reward = -abs(self._current_base_vel[1])
-        action_reward = -self._action_cost_weight * np.linalg.norm(self._last_action) / 12
-        drift_reward =  self._drift_weight * -abs(self._current_base_pos[1])
+        # y_velocity_reward = -abs(self._current_base_vel[1])
+        # action_reward = -self._action_cost_weight * np.linalg.norm(self._last_action) / 12
+        drift_reward =  - self._drift_weight * (self._current_base_pos[1])  ** 2
         #orientation_reward = -sum(abs(self._current_base_ori_euler - self._init_base_ori_euler))
 
-        reward = x_velocity_reward + y_velocity_reward + forward_reward + displacement_reward + action_reward \
-                + drift_reward #+ orientation_reward
+        reward = x_velocity_reward + drift_reward + self.step_counter # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
+                  #+ orientation_reward
 
         #print("Reward", reward)
         return reward
