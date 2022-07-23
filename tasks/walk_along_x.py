@@ -6,7 +6,7 @@ class WalkAlongX(object):
                 #forward_reward_cap: float = float("inf"),
                 velocity_weight: float = 0.0001,
                 #distance_weight: float = 1.0,
-                step_weight : float = 0.01,
+                step_weight : float = 1,
                 # energy_weight=0.0005,
                 #shake_weight: float = 0.005,
                 drift_weight: float = 100,
