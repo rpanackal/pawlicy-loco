@@ -2,9 +2,6 @@
 import gym
 
 from envs import env_builder
-from locomotion.robots import a1
-from locomotion.robots import robot_config
-
 
 class A1GymEnv(gym.Env):
   """A1 environment that supports the gym interface."""

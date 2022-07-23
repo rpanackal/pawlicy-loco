@@ -6,6 +6,7 @@ from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
 
 from tasks import walk_along_x
+from robots import a1_v2
 import numpy as np
 
 MOTOR_CONTROL_MODE_MAP = {
@@ -50,7 +51,7 @@ def build_regular_env(args, enable_rendering=False):
     task = walk_along_x.WalkAlongX()
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
-                                            robot_class=a1.A1,
+                                            robot_class=a1_v2.A1V2,
                                             robot_sensors=sensors,
                                             task=task)
 
