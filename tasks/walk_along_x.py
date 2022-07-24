@@ -106,7 +106,7 @@ class WalkAlongX(object):
         # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
-        #orientation_reward = -sum(abs(self._current_base_ori_euler - self._init_base_ori_euler))
+        orientation_reward = -sum(abs(self._current_base_ori_euler - self._init_base_ori_euler))
         reward = x_velocity_reward + drift_reward + self.step_counter + distance_reward #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #+ orientation_reward
 
