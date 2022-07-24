@@ -48,7 +48,7 @@ def build_regular_env(args, enable_rendering=False):
         robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
     ]
 
-    task = walk_along_x_v3.WalkAlongX()
+    task = walk_along_x.WalkAlongX()
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
                                             robot_class=a1_v2.A1V2,
