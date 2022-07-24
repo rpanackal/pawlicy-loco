@@ -5,7 +5,7 @@ from locomotion.robots import a1
 from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
 
-from tasks import walk_along_x, walk_along_x_v2
+from tasks import walk_along_x, walk_along_x_v2, walk_along_x_v3
 from robots import a1_v2
 import numpy as np
 
@@ -48,7 +48,7 @@ def build_regular_env(args, enable_rendering=False):
         robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
     ]
 
-    task = walk_along_x.WalkAlongX()
+    task = walk_along_x_v3.WalkAlongX()
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
                                             robot_class=a1_v2.A1V2,
