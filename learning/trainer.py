@@ -101,6 +101,19 @@ class Trainer:
                 if done:
                     obs = self._env.reset()
 
+    def random(self, model_path=None):
+        """
+        Tests the agent
+
+        Args:
+            env: The gym environment to test with random runs.
+        """
+        for i in range(self._args.total_num_eps):
+            done = False
+            obs = self._env.reset()
+            while not done:
+                obs, reward, done, info = self._env.step(self._env.action_space.sample())
+    
     def setup_env(self, max_episode_steps):
         """
         Modifies the environment to suit to the needs of stable_baselines3.

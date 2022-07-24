@@ -18,7 +18,7 @@ SAVE_DIR = os.path.join(currentdir, "agents")
 
 def parse_arguements():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', "-m", dest="mode", default="test", choices=["train", "test"], type=str, help='to set to training or testing mode')
+    parser.add_argument('--mode', "-m", dest="mode", default="test", choices=["train", "test", "random"], type=str, help='to set to training or testing mode')
     parser.add_argument('--max_episode_steps', "-mes", dest="max_episode_steps", default=1000, type=int, help='maximum steps per episode')
     parser.add_argument('--visualize', "-v", dest="visualize", action="store_true", help='To flip rendering behaviour')
     parser.add_argument("--randomise_terrain", "-rt", dest="randomise_terrain", default=False, type=bool, help="to setup a randommized terrain")
@@ -54,9 +54,13 @@ def main():
         local_trainer.save_model(SAVE_DIR)
 
     # Testing
-    if args.mode == "test":
+    elif args.mode == "test":
         test_env = A1GymEnv(args, enable_rendering=True)
         trainer.Trainer(test_env, "SAC", args).test(SAVE_DIR)
-
+    
+    elif args.mode == "random":
+        rand_env = A1GymEnv(args, enable_rendering=True)
+        trainer.Trainer(rand_env, "SAC", args).random()
+ 
 if __name__ == "__main__":
     main()
