@@ -1,5 +1,7 @@
 from locomotion.robots.a1 import A1
 
+import numpy as np
+
 URDF_FILENAME = "a1/a1.urdf"
 
 class A1V2(A1):
@@ -36,5 +38,5 @@ class A1V2(A1):
         Returns raw absolute orientation of base in euler
         """
         roll_pitch_yaw = self._pybullet_client.getEulerFromQuaternion(self.GetRawBaseOrientation())
-        return roll_pitch_yaw
+        return np.asarray(roll_pitch_yaw)
     
