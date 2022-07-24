@@ -5,7 +5,7 @@ from locomotion.robots import a1
 from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
 
-from tasks import walk_along_x
+from tasks import walk_along_x, walk_along_x_v2
 from robots import a1_v2
 import numpy as np
 
