@@ -94,9 +94,9 @@ class WalkAlongX(object):
     def reward(self, env):
 
         # bug : -ve velocity along y is rewarded
-        velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
-        # x_velocity_reward = self._velocity_weight * self._current_base_vel[0]
-        forward_reward = self._distance_weight * self._current_base_pos[0] - self._init_base_pos[0]
+        #velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
+        velocity_reward = self._velocity_weight * self._current_base_vel[0]
+        forward_reward = self._distance_weight * (self._current_base_pos[0] - self._init_base_pos[0])
         # displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
 
         # y_velocity_reward = -abs(self._current_base_vel[1])
