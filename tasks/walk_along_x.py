@@ -4,7 +4,7 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 10,
+                velocity_weight: float = 1,
                 distance_weight: float = 0.1,
                 step_weight : float = 1,
                 # energy_weight=0.0005,

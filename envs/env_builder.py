@@ -5,7 +5,7 @@ from locomotion.robots import a1
 from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
 
-from tasks import walk_along_x, default_task
+from tasks import walk_along_x, default_task, walk_along_x_v3
 from robots import a1_v2
 import numpy as np
 
@@ -25,8 +25,6 @@ def build_regular_env(args, enable_rendering=False):
         robot_on_rack: Whether robot is on rack or not
     """
 
-    if args.visualize:
-        enable_rendering = not(enable_rendering)
     sim_params = locomotion_gym_config.SimulationParameters()
     sim_params.enable_rendering = enable_rendering
     sim_params.motor_control_mode = MOTOR_CONTROL_MODE_MAP[args.motor_control_mode]
@@ -36,7 +34,7 @@ def build_regular_env(args, enable_rendering=False):
     sim_params.enable_action_filter = False
     sim_params.enable_clip_motor_commands = False
     sim_params.robot_on_rack = False
-    sim_params.randomise_terrain = args.randomise_terrain
+    #sim_params.randomise_terrain = args.randomise_terrain
 
     
     gym_config = locomotion_gym_config.LocomotionGymConfig(
@@ -48,7 +46,7 @@ def build_regular_env(args, enable_rendering=False):
         robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
     ]
 
-    task = walk_along_x.WalkAlongX()
+    task = walk_along_x_v3.WalkAlongX()
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
                                             robot_class=a1_v2.A1V2,

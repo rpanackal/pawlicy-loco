@@ -26,8 +26,11 @@ def parse_arguements():
 
     parser.add_argument('--author', "-au", dest="author", default="rpanackal", type=str, help='name of author')
     parser.add_argument('--exp_suffix', "-s", dest="exp_suffix", default="", type=str, help='appends to experiment name')
-    parser.add_argument('--total_timesteps', "-tts", dest="total_timesteps", default=int(1e5), type=int, help='total number of training steps')
-    
+    parser.add_argument('--total_timesteps', "-tts", dest="total_timesteps", default=int(1e6), type=int, help='total number of training steps')
+    parser.add_argument('--eval_env', "-eval", dest="eval_env", action="store_true", help='To enable evaluation environment while training')
+    parser.add_argument("--algorithm", "-a", dest="algorithm",  default="SAC", choices=["SAC", "PPO", "TD3"], type=str, help="to set the training algorithm")
+    parser.add_argument("--log_dir", "-ld", dest="log_dir",  default=SAVE_DIR, type=str, help="to set model save and tensorboard log directory")
+
     parser.add_argument('--total_num_eps', "-tne", dest="total_num_eps", default=20, type=int, help='total number of test episodes')
     parser.add_argument('--load_exp_name', "-l", dest="load_exp_name", default="sac_rpanackal_tns100000", type=str, help='name of experiment to be tested')
     #parser.add_argument('--mode', "-m", default="eval", choices=["train", "eval"], type=str, help='To set to training or evaluation mode')
@@ -43,24 +46,38 @@ def main():
 
     # Training
     if args.mode == "train":
-        env = A1GymEnv(args, enable_rendering=False)
+        train_env = A1GymEnv(args, enable_rendering=False)
 
+        # Need to do this because our current pybullet setup can have only one client with GUI enabled
+        if args.eval_env:
+            if args.visualize :
+                eval_env = A1GymEnv(args, enable_rendering=True)
+            else:
+                eval_env = A1GymEnv(args, enable_rendering=False)
+        else:
+            eval_env = None
+        
         # Train the agent
-        local_trainer = trainer.Trainer(env, "SAC", args)
-        _, hyperparameters = utils.read_hyperparameters("SAC", 1, {"learning_starts": 2000})
-        model = local_trainer.train(hyperparameters)
+        local_trainer = trainer.Trainer(env=train_env, eval_env=eval_env, args=args)
+        
+        model = local_trainer.train()
 
         # Save the model after training
         local_trainer.save_model(SAVE_DIR)
 
     # Testing
     elif args.mode == "test":
-        test_env = A1GymEnv(args, enable_rendering=True)
-        trainer.Trainer(test_env, "SAC", args).test(SAVE_DIR)
+
+        enable_rendering = True
+        if args.visualize:
+            enable_rendering = False
+        
+        test_env = A1GymEnv(args, enable_rendering)
+        trainer.Trainer(env=test_env, args=args).test(exp_name=args.load_exp_name)
     
     elif args.mode == "random":
         rand_env = A1GymEnv(args, enable_rendering=True)
-        trainer.Trainer(rand_env, "SAC", args).random()
+        trainer.Trainer(env=rand_env, args=args).random()
  
 if __name__ == "__main__":
     main()
