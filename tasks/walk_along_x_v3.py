@@ -12,7 +12,7 @@ class WalkAlongX(object):
                 shake_weight: float = 0.005,
                 drift_weight: float = 100,
                 orientation_weight : float = 0.1,
-                pose_weight : float = 1,
+                pose_weight : float = 10,
                 #action_cost_weight: float = 0.02,
                 # deviation_weight: float = 1,
                 enable_roll_limit : bool = True,
@@ -46,7 +46,7 @@ class WalkAlongX(object):
 
         self.step_counter = 0
         self.max_vel = 0
-        self._target_pos =  np.array([50, 0, 1])
+        self._target_pos =  np.array([10, 0, 1])
 
     def __call__(self, env):
         return self.reward(env)
