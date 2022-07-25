@@ -1,10 +1,4 @@
-# from pawlicy.envs import A1GymEnv
-# from pawlicy.envs.gym_config import LocomotionGymConfig
-# from pawlicy.robots import robot_config
-# from pawlicy.robots.a1 import constants
-# from pawlicy.sensors import robot_sensors
-# from pawlicy.tasks import walk_along_x
-from learning import trainer, utils
+from learning import trainer
 
 import os
 import inspect
