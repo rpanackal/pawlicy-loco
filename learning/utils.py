@@ -1,3 +1,4 @@
+from cmath import inf
 import inspect
 import os
 from collections import OrderedDict
@@ -85,6 +86,18 @@ class TensorboardCallback(BaseCallback):
 
     def __init__(self, verbose=0):
         self._best_reward = 0
+
+        self.max_hip_torque = float(-inf)
+        self.min_hip_torque = float(inf)
+        self.max_leg_torque = float(-inf)
+        self.min_leg_torque = float(inf)
+
+
+        self.max_hip_velocity = float(-inf)
+        self.min_hip_velocity = float(inf)
+        self.max_leg_velocity = float(-inf)
+        self.min_leg_velocity = float(inf)
+
         super(TensorboardCallback, self).__init__(verbose)
 
     def _on_training_start(self):
@@ -98,14 +111,84 @@ class TensorboardCallback(BaseCallback):
     def _on_step(self) -> bool:
         local_env = self.training_env.venv.envs[0]
 
+        self._set_max_min_veocities(local_env)
+        self._set_max_min_torques(local_env)
+
         # Find the best reward
         reward = np.max(np.array(local_env.episode_returns)) if len(local_env.episode_returns) > 0 else 0
         self._best_reward = self._best_reward if self._best_reward > reward else reward
+
 
         if self.n_calls % self._log_freq == 0:
             self.tb_formatter.writer.add_scalar("x_position", local_env.robot.GetBasePosition()[0], self.num_timesteps)
             self.tb_formatter.writer.add_scalar("y_position", local_env.robot.GetBasePosition()[1], self.num_timesteps)
             self.tb_formatter.writer.add_scalar("z_position", local_env.robot.GetBasePosition()[2], self.num_timesteps)
             self.tb_formatter.writer.add_scalar("x_velocity", local_env.robot.GetBaseVelocity()[0], self.num_timesteps)
+
+            self.tb_formatter.writer.add_scalar("max_hip_torque", self.max_hip_torque, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("min_hip_torque", self.min_hip_torque, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("max_leg_torque", self.max_leg_torque, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("min_leg_torque", self.min_leg_torque, self.num_timesteps)
+
+            self.tb_formatter.writer.add_scalar("max_hip_velocity", self.max_hip_velocity, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("min_hip_velocity", self.min_hip_velocity, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("max_leg_velocity", self.max_leg_velocity, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("min_leg_velocity", self.min_leg_velocity, self.num_timesteps)
+            
+            # self.tb_formatter.writer.add_scalar("hip_front_right_torque", local_env.robot.GetMotorTorques()[0], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_front_right_torque", local_env.robot.GetMotorTorques()[1], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_front_right_torque", local_env.robot.GetMotorTorques()[2], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_front_left_torque", local_env.robot.GetMotorTorques()[3], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_front_left_torque", local_env.robot.GetMotorTorques()[4], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_front_left_torque", local_env.robot.GetMotorTorques()[5], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_rear_right_torque", local_env.robot.GetMotorTorques()[6], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_rear_right_torque", local_env.robot.GetMotorTorques()[7], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_rear_right_torque", local_env.robot.GetMotorTorques()[8], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_rear_left_torque", local_env.robot.GetMotorTorques()[9], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_rear_left_torque", local_env.robot.GetMotorTorques()[10], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_rear_left_torque", local_env.robot.GetMotorTorques()[11], self.num_timesteps)
+
+
+            # self.tb_formatter.writer.add_scalar("hip_front_right_velocity", local_env.robot.GetMotorVelocities()[0], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_front_right_velocity", local_env.robot.GetMotorVelocities()[1], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_front_right_velocity", local_env.robot.GetMotorVelocities()[2], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_front_left_velocity", local_env.robot.GetMotorVelocities()[3], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_front_left_velocity", local_env.robot.GetMotorVelocities()[4], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_front_left_velocity", local_env.robot.GetMotorVelocities()[5], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_rear_right_velocity", local_env.robot.GetMotorVelocities()[6], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_rear_right_velocity", local_env.robot.GetMotorVelocities()[7], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_rear_right_velocity", local_env.robot.GetMotorVelocities()[8], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("hip_rear_left_velocity", local_env.robot.GetMotorVelocities()[9], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("upper_rear_left_velocity", local_env.robot.GetMotorVelocities()[10], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("lower_rear_left_velocity", local_env.robot.GetMotorVelocities()[11], self.num_timesteps)
+
             self.tb_formatter.writer.add_scalar("best_reward", self._best_reward, self.num_timesteps)
             self.tb_formatter.writer.flush()
+
+    def _set_max_min_torques(self, local_env):
+        joint_torques = local_env.robot.GetMotorTorques()
+        for i, torque in enumerate(joint_torques):
+            if i % 3 == 0:
+                if torque > self.max_hip_torque:
+                    self.max_hip_torque = torque
+                if torque < self.min_hip_torque:
+                    self.min_hip_torque = torque
+            else:
+                if torque > self.max_leg_torque:
+                    self.max_leg_torque = torque
+                if torque < self.min_leg_torque:
+                    self.min_leg_torque = torque
+    
+    def _set_max_min_veocities(self, local_env):
+        joint_veocities = local_env.robot.GetMotorVelocities()
+        for i, velocity in enumerate(joint_veocities):
+            if i % 3 == 0:
+                if velocity > self.max_hip_velocity:
+                    self.max_hip_velocity = velocity
+                if velocity < self.min_hip_velocity:
+                    self.min_hip_velocity = velocity
+            else:
+                if velocity > self.max_leg_velocity:
+                    self.max_leg_velocity = velocity
+                if velocity < self.min_leg_velocity:
+                    self.min_leg_velocity = velocity

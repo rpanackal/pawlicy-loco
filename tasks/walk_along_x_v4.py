@@ -112,7 +112,7 @@ class WalkAlongX(object):
         # drift_reward =  - self._drift_weight * (self._current_base_pos[1])  ** 2
         # #distance_reward = - self._distance_weight * np.linalg.norm(self._target_pos - self._current_base_pos)
         # orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
-        reward = velocity_reward + shake_reward #+ action_reward
+        reward = velocity_reward + shake_reward + self._step_weight #+ action_reward
             # x_velocity_reward + drift_reward + self.step_counter + distance_reward + orientation_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
