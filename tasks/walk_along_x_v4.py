@@ -11,7 +11,7 @@ class WalkAlongX(object):
                 shake_weight: float = 0.005,
                 drift_weight: float = 1,
                 orientation_weight : float = 1,
-                #action_cost_weight: float = 0.02,
+                action_cost_weight: float = 0.02,
                 # deviation_weight: float = 1,
                 enable_roll_limit : bool = False,
                 healthy_roll_limit : float = np.pi * 3/4,
@@ -24,7 +24,7 @@ class WalkAlongX(object):
         """Initializes the task."""
 
         #self._forward_reward_cap = forward_reward_cap
-        #self._action_cost_weight = action_cost_weight
+        self._action_cost_weight = action_cost_weight
         self._velocity_weight = velocity_weight
         self._distance_weight = distance_weight
         self._shake_weight = shake_weight
@@ -101,7 +101,7 @@ class WalkAlongX(object):
         # #displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
 
         # # y_velocity_reward = -abs(self._current_base_vel[1])
-        # # action_reward = -self._action_cost_weight * np.linalg.norm(self._last_action) / 12
+        action_reward = -self._action_cost_weight * np.linalg.norm(self._last_action) / 12
         
         
        
@@ -112,7 +112,7 @@ class WalkAlongX(object):
         # drift_reward =  - self._drift_weight * (self._current_base_pos[1])  ** 2
         # #distance_reward = - self._distance_weight * np.linalg.norm(self._target_pos - self._current_base_pos)
         # orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
-        reward = velocity_reward + shake_reward
+        reward = velocity_reward + shake_reward #+ action_reward
             # x_velocity_reward + drift_reward + self.step_counter + distance_reward + orientation_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
