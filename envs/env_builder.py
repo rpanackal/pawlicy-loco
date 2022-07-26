@@ -7,6 +7,7 @@ from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper
 
 from tasks import walk_along_x, default_task, walk_along_x_v3, walk_along_x_v4
 from robots import a1_v2
+from sensors import a1_sensors
 import numpy as np
 
 MOTOR_CONTROL_MODE_MAP = {
@@ -44,9 +45,11 @@ def build_regular_env(args, enable_rendering=False):
         robot_sensors.BaseDisplacementSensor(dtype=np.float32),
         robot_sensors.IMUSensor(dtype=np.float32),
         robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
+        a1_sensors.MotorVelocitySensor(dtype=np.float32),
+        a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
 
-    task = walk_along_x.WalkAlongX()
+    task = walk_along_x_v4.WalkAlongX()
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
                                             robot_class=a1_v2.A1V2,
