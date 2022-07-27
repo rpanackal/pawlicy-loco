@@ -1,12 +1,12 @@
 import os
 import datetime
-from pyexpat import model
 from gym.wrappers import TimeLimit
 from stable_baselines3 import SAC, PPO, TD3
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from stable_baselines3.common.noise import NormalActionNoise
+from stable_baselines3.common.callbacks import EvalCallback, CallbackList
 import numpy as np
 
 # TODO: Check the logic of NormalizeActionWrapper
@@ -40,6 +40,7 @@ class Trainer:
             self._eval_env = self.setup_env(eval_env, self._max_episode_steps // 2)
 
         self._exp_name = self._get_exp_name()
+        self._exp_dir = os.path.join(self._log_dir, self._exp_name)
 
     def train(self, total_timesteps=None, eval_env=None):
         """
@@ -85,25 +86,34 @@ class Trainer:
                 "total_timesteps": n_timesteps
             }
 
-        log_dir = os.path.join(self._log_dir, self._exp_name, "logs")
+        tensorboard_log_dir = os.path.join(self._exp_dir, "logs")
          # Use the appropriate algorithm
         self._model = ALGORITHMS[self._algorithm](env=self._env,
                                                     verbose=1,
                                                     action_noise=action_noise if self._algorithm == "TD3" else None,
                                                     learning_rate=utils.lr_schedule(lr, **lr_scheduler_args) if scheduler_type is not None else lr,
-                                                    tensorboard_log=log_dir,
+                                                    tensorboard_log=tensorboard_log_dir,
                                                     **hyperparameters,
                                                     policy_kwargs=policy_kwargs if self._algorithm == "TD3" else None)
 
 
         # Train the model (check if evaluation is needed)
+        
         if self._eval_env is not None:
+            eval_callback = EvalCallback(self._eval_env,
+                                            best_model_save_path=self._exp_dir,
+                                            log_path=self._exp_dir,
+                                            eval_freq=eval_frequency,
+                                            deterministic=True,
+                                            render=False)
+            callbacks = CallbackList([eval_callback, utils.TensorboardCallback()])
+
             self._model.learn(n_timesteps,
                                 log_interval=100,
                                 eval_env=self._eval_env,
                                 eval_freq=eval_frequency,
                                 reset_num_timesteps=False,
-                                callback=utils.TensorboardCallback())
+                                callback=callbacks)
         else:
             self._model.learn(n_timesteps,
                                 log_interval=100,
@@ -135,20 +145,30 @@ class Trainer:
 
             # Create the directory to save the models in.
             os.makedirs(save_dir, exist_ok=True)
-            self._model.save(os.path.join(save_dir, self._exp_name, "model"))
+            self._model.save(os.path.join(self._exp_dir, "model"))
             if store_replay_buffer:
-                self._model.save_replay_buffer(os.path.join(save_dir, self._exp_name, "replay_buffer"))
+                self._model.save_replay_buffer(os.path.join(self._exp_dir, "replay_buffer"))
         
     def load_model(self, exp_name=None, model_path=None, load_replay_buffer=False):
         if model_path is not None:
-            model = SAC.load(model_path)
+            model = ALGORITHMS[self._algorithm].load(model_path)
+        
         elif exp_name is not None:
-            # If experiment name given then looks for model in log directory
-            model = SAC.load(os.path.join(self._log_dir, exp_name, "model"))
+            # If experiment name given then looks for model in _log_dir directory
+
+            # Loads the best model by default, if not available then loads final model
+            if self._args.load_final_model or not os.path.exists(os.path.join(exp_name, "best_model")):
+                model_path = os.path.join(self._log_dir, exp_name, "model")
+            else:
+                model_path = os.path.join(self._log_dir, exp_name, "best_model")
+            
+            model = ALGORITHMS[self._algorithm].load(model_path)
             if load_replay_buffer:
-                model.load_replay_buffer(os.path.join(model_path, exp_name, "replay_buffer"))
+                model.load_replay_buffer(os.path.join(self._log_dir, exp_name, "replay_buffer"))
+        
         else:
             raise ValueError("No model path or experiment name specified to load a trained model.")
+        
         return model
     
     def test(self, exp_name=None, model_path=None):

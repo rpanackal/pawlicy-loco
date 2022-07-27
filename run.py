@@ -27,6 +27,7 @@ def parse_arguements():
 
     parser.add_argument('--total_num_eps', "-tne", dest="total_num_eps", default=20, type=int, help='total number of test episodes')
     parser.add_argument('--load_exp_name', "-l", dest="load_exp_name", default="sac_rpanackal_tns100000", type=str, help='name of experiment to be tested')
+    parser.add_argument('--load_final_model', "-lfm", dest="load_final_model", action="store_true", help='Whether to load the final model instead of best model')
     #parser.add_argument('--mode', "-m", default="eval", choices=["train", "eval"], type=str, help='To set to training or evaluation mode')
 
     args = parser.parse_args()
