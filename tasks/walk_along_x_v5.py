@@ -11,7 +11,7 @@ class WalkAlongX(object):
                 # energy_weight=0.0005,
                 shake_weight: float = 0.005,
                 drift_weight: float = 100,
-                orientation_weight : float = 4,
+                orientation_weight : float = 8,
                 pose_weight : float = 10,
                 #action_cost_weight: float = 0.02,
                 # deviation_weight: float = 1,

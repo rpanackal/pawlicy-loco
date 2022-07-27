@@ -157,7 +157,7 @@ class Trainer:
             # If experiment name given then looks for model in _log_dir directory
 
             # Loads the best model by default, if not available then loads final model
-            if self._args.load_final_model or not os.path.exists(os.path.join(exp_name, "best_model")):
+            if self._args.load_final_model or not os.path.exists(os.path.join(self._log_dir, exp_name, "best_model.zip")):
                 model_path = os.path.join(self._log_dir, exp_name, "model")
             else:
                 model_path = os.path.join(self._log_dir, exp_name, "best_model")
