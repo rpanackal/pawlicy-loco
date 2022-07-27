@@ -4,6 +4,7 @@ from locomotion.envs.sensors import robot_sensors
 from locomotion.robots import a1
 from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
+from locomotion.envs.env_wrappers import trajectory_generator_wrapper_env, simple_openloop
 
 from tasks import walk_along_x, default_task, walk_along_x_v3, walk_along_x_v4
 from robots import a1_v2
@@ -16,7 +17,11 @@ MOTOR_CONTROL_MODE_MAP = {
     'Hybrid': robot_config.MotorControlMode.HYBRID
 }
 
-def build_regular_env(args, enable_rendering=False):
+def build_regular_env(args, 
+                    enable_rendering=False,
+                    wrap_trajectory_generator=True,
+                    action_limit=(0.75, 0.75, 0.75)
+                    ):
     """ Builds the gym environment needed for RL
 
     Args:
@@ -51,6 +56,7 @@ def build_regular_env(args, enable_rendering=False):
 
     task = walk_along_x.WalkAlongX()
 
+
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
                                             robot_class=a1_v2.A1V2,
                                             robot_sensors=sensors,
@@ -58,4 +64,12 @@ def build_regular_env(args, enable_rendering=False):
 
     env = obs_dict_to_array_wrapper.ObservationDictionaryToArrayWrapper(
         env)
+    
+    if (MOTOR_CONTROL_MODE_MAP[args.motor_control_mode] == robot_config.MotorControlMode.POSITION) \
+        and wrap_trajectory_generator:
+        env = trajectory_generator_wrapper_env.TrajectoryGeneratorWrapperEnv(
+            env,
+            trajectory_generator=simple_openloop.LaikagoPoseOffsetGenerator(
+                action_limit=action_limit))
+
     return env
