@@ -113,7 +113,7 @@ class WalkAlongX(object):
         
         
         #velocity_reward = self._velocity_weight * self._current_base_vel[0]
-        distance_reward = - self._distance_weight * np.linalg.norm(self._target_pos - self._current_base_pos)
+        #distance_reward = - self._distance_weight * np.linalg.norm(self._target_pos - self._current_base_pos)
         #displacement_reward = self._current_base_pos - self._last_base_pos)
         #forward_reward =  self._forward_weight * (self._current_base_pos[0] - self._init_base_pos[0])
         #pose_reward = self._pose_weight * self._current_base_pos[2]
@@ -129,7 +129,7 @@ class WalkAlongX(object):
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         
-        reward = self._step_weight + distance_reward + velocity_reward
+        reward = velocity_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)

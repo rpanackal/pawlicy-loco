@@ -54,7 +54,7 @@ def build_regular_env(args,
         a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
 
-    task = walk_along_x_v4.WalkAlongX()
+    task = walk_along_x_v6.WalkAlongX()
 
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
