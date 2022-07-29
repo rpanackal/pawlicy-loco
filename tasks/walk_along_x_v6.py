@@ -4,8 +4,8 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 12,
-                distance_weight: float = 0.01,
+                velocity_weight: float = 1,
+                distance_weight: float = 0.02,
                 forward_weight : float = 0.01,
                 step_weight : float = 5,
                 # energy_weight=0.0005,
@@ -103,8 +103,8 @@ class WalkAlongX(object):
     def reward(self, env):
 
         # bug : -ve velocity along y is rewarded
-        # velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
-        #x_velocity_reward = self._velocity_weight * self._current_base_vel[0]
+        #velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
+        velocity_reward = self._velocity_weight * self._current_base_vel[0]
         # forward_reward = self._distance_weight * self._current_base_pos[0] - self._init_base_pos[0]
         # displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
 
@@ -129,7 +129,7 @@ class WalkAlongX(object):
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         
-        reward = self._step_weight + distance_reward
+        reward = self._step_weight + distance_reward + velocity_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
