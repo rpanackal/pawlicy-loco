@@ -97,8 +97,8 @@ class TensorboardCallback(BaseCallback):
         self.max_leg_velocity = float("-inf")
         self.min_leg_velocity = float("inf")
 
-        self.max_foot_pos = float("-inf")
-        self.min_foot_pos = float("inf")
+        # self.max_foot_pos = float("-inf")
+        # self.min_foot_pos = float("inf")
 
         super(TensorboardCallback, self).__init__(verbose)
 
@@ -115,7 +115,7 @@ class TensorboardCallback(BaseCallback):
 
         self._set_max_min_veocities(local_env)
         self._set_max_min_torques(local_env)
-        self._set_max_min_foot_positions(local_env)
+        #self._set_max_min_foot_positions(local_env)
 
         # Find the best reward
         reward = np.max(np.array(local_env.episode_returns)) if len(local_env.episode_returns) > 0 else 0
@@ -179,8 +179,8 @@ class TensorboardCallback(BaseCallback):
             # self.tb_formatter.writer.add_scalar("rear_left_foot_y", foot_pos[10], self.num_timesteps)
             # self.tb_formatter.writer.add_scalar("rear_left_foot_z", foot_pos[11], self.num_timesteps)
 
-            self.tb_formatter.writer.add_scalar("max_foot_pos", self.max_foot_pos, self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("min_foot_pos", self.min_foot_pos, self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("max_foot_pos", self.max_foot_pos, self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("min_foot_pos", self.min_foot_pos, self.num_timesteps)
 
             self.tb_formatter.writer.add_scalar("best_reward", self._best_reward, self.num_timesteps)
             self.tb_formatter.writer.flush()

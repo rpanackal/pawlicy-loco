@@ -50,8 +50,8 @@ def build_regular_env(args,
         robot_sensors.BasePositionSensor(dtype=np.float32),
         robot_sensors.IMUSensor(dtype=np.float32, channels=['R', 'P', 'Y', 'dR', 'dP', 'dY']),
         #robot_sensors.PoseSensor(dtype=np.float32),
-        a1_sensors.FootPositionSensor(dtype=np.float32), 
-        #robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
+        #a1_sensors.FootPositionSensor(dtype=np.float32), 
+        robot_sensors.MotorAngleSensor(num_motors=a1.NUM_MOTORS, dtype=np.float32),
         a1_sensors.MotorVelocitySensor(dtype=np.float32),
         a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
