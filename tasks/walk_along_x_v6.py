@@ -134,7 +134,6 @@ class WalkAlongX(object):
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
-        print(reward)
         return reward
 
     @property
