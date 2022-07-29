@@ -1,4 +1,3 @@
-from turtle import distance
 import numpy as np
 
 class WalkAlongX(object):
