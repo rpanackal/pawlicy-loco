@@ -1,4 +1,5 @@
 """Wrapper to make the a1 environment suitable for OpenAI gym."""
+from unittest import result
 import gym
 
 from envs import env_builder
@@ -18,7 +19,15 @@ class A1GymEnv(gym.Env):
     self.enable_rendering = enable_rendering
 
   def step(self, action):
-    return self._env.step(action)
+    results = self._env.step(action)
+
+    foot_pos = self._env.robot.GetFootPositionsInBaseFrame()
+    print("Foot pose")
+
+    print(f"{len(foot_pos)} {type(foot_pos)} {foot_pos}")
+    print(foot_pos.ravel())
+    exit()
+    return results
 
   def reset(self):
     return self._env.reset()

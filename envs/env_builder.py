@@ -20,7 +20,7 @@ MOTOR_CONTROL_MODE_MAP = {
 def build_regular_env(args, 
                     enable_rendering=False,
                     wrap_trajectory_generator=True,
-                    action_limit=(0.50, 0.75, 0.75)
+                    action_limit=(0.75, 0.75, 0.75)
                     ):
     """ Builds the gym environment needed for RL
 
@@ -54,7 +54,7 @@ def build_regular_env(args,
         a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
 
-    task = walk_along_x_v6.WalkAlongX()
+    task = walk_along_x_v5.WalkAlongX()
 
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,

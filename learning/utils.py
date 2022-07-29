@@ -162,6 +162,21 @@ class TensorboardCallback(BaseCallback):
             # self.tb_formatter.writer.add_scalar("upper_rear_left_velocity", local_env.robot.GetMotorVelocities()[10], self.num_timesteps)
             # self.tb_formatter.writer.add_scalar("lower_rear_left_velocity", local_env.robot.GetMotorVelocities()[11], self.num_timesteps)
 
+            foot_pos = local_env.robot.GetFootPositionsInBaseFrame().ravel()
+
+            self.tb_formatter.writer.add_scalar("front_right_foot_x", foot_pos[0], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("front_right_foot_y", foot_pos[1], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("front_right_foot_z", foot_pos[2], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("front_left_foot_x", foot_pos[3], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("front_left_foot_y", foot_pos[4], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("front_left_foot_z", foot_pos[5], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_right_foot_x", foot_pos[6], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_right_foot_y", foot_pos[7], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_right_foot_z", foot_pos[8], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_left_foot_x", foot_pos[9], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_left_foot_y", foot_pos[10], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("rear_left_foot_z", foot_pos[11], self.num_timesteps)
+
             self.tb_formatter.writer.add_scalar("best_reward", self._best_reward, self.num_timesteps)
             self.tb_formatter.writer.flush()
 
