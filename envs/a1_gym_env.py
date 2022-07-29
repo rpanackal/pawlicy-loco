@@ -22,11 +22,6 @@ class A1GymEnv(gym.Env):
     results = self._env.step(action)
 
     foot_pos = self._env.robot.GetFootPositionsInBaseFrame()
-    print("Foot pose")
-
-    print(f"{len(foot_pos)} {type(foot_pos)} {foot_pos}")
-    print(foot_pos.ravel())
-    exit()
     return results
 
   def reset(self):
