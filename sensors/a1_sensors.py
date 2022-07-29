@@ -88,7 +88,7 @@ class FootPositionSensor(sensor.BoxSpaceSensor):
 
         self._num_feet = num_feet
 
-        super(MotorTorqueSensor, self).__init__(
+        super(FootPositionSensor, self).__init__(
             name=name, 
             shape=(num_feet * 3,), 
             lower_bound=lower_bound, 
