@@ -20,7 +20,7 @@ MOTOR_CONTROL_MODE_MAP = {
 def build_regular_env(args, 
                     enable_rendering=False,
                     wrap_trajectory_generator=True,
-                    action_limit=(0.75, 0.75, 0.75)
+                    action_limit=(0.50, 0.75, 0.75)
                     ):
     """ Builds the gym environment needed for RL
 

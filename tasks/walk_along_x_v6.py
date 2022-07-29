@@ -1,15 +1,16 @@
+from turtle import distance
 import numpy as np
 
 class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 1,
+                velocity_weight: float = 10,
                 distance_weight: float = 0.02,
                 forward_weight : float = 0.01,
-                step_weight : float = 5,
+                step_weight : float = 1,
                 # energy_weight=0.0005,
-                shake_weight: float = 0.05,
+                shake_weight: float = 1,
                 drift_weight: float = 0.5,
                 orientation_weight : float = 10,
                 pose_weight : float = 10,
@@ -118,21 +119,23 @@ class WalkAlongX(object):
         #forward_reward =  self._forward_weight * (self._current_base_pos[0] - self._init_base_pos[0])
         #pose_reward = self._pose_weight * self._current_base_pos[2]
         #orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
-        #drift_reward =  - self._drift_weight * abs(self._current_base_pos[1])
+        drift_reward =  - self._drift_weight * (self._current_base_pos[1]) ** 2
         
-        #orientation = env.robot.GetBaseOrientation()
-        #rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
-        #local_up_vec = rot_matrix[6:]
-        #shake_reward = - self._shake_weight * abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
+        # orientation = env.robot.GetBaseOrientation()
+        # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
+        # local_up_vec = rot_matrix[6:]
+        # shake_reward = - self._shake_weight * abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
+    
         # orientation = env.robot.GetBaseOrientation()
         # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         
-        reward = velocity_reward
+        reward = velocity_reward + drift_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
+        print(reward)
         return reward
 
     @property

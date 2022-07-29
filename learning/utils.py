@@ -101,7 +101,7 @@ class TensorboardCallback(BaseCallback):
         super(TensorboardCallback, self).__init__(verbose)
 
     def _on_training_start(self):
-        self._log_freq = 1000  # log every 1000 calls
+        self._log_freq = 10  # log every 100 calls
 
         output_formats = self.logger.output_formats
         # Save reference to tensorboard formatter object

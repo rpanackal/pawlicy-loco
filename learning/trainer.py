@@ -35,9 +35,10 @@ class Trainer:
         self._args = args 
         self._env = self.setup_env(env, self._max_episode_steps)
 
-        self._eval_env = eval_env
         if eval_env is not None:
             self._eval_env = self.setup_env(eval_env, self._max_episode_steps // 2)
+        else:
+            self._eval_env = eval_env
 
         self._exp_name = self._get_exp_name()
         self._exp_dir = os.path.join(self._log_dir, self._exp_name)
@@ -109,14 +110,14 @@ class Trainer:
             callbacks = CallbackList([eval_callback, utils.TensorboardCallback()])
 
             self._model.learn(n_timesteps,
-                                log_interval=100,
+                                log_interval=10,
                                 eval_env=self._eval_env,
                                 eval_freq=eval_frequency,
                                 reset_num_timesteps=False,
                                 callback=callbacks)
         else:
             self._model.learn(n_timesteps,
-                                log_interval=100,
+                                log_interval=10,
                                 reset_num_timesteps=False,
                                 callback=utils.TensorboardCallback())
 
@@ -160,6 +161,7 @@ class Trainer:
             if self._args.load_final_model or not os.path.exists(os.path.join(self._log_dir, exp_name, "best_model.zip")):
                 model_path = os.path.join(self._log_dir, exp_name, "model")
             else:
+                print("Best experiment model is being loaded... ")
                 model_path = os.path.join(self._log_dir, exp_name, "best_model")
             
             model = ALGORITHMS[self._algorithm].load(model_path)
