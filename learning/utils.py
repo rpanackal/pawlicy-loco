@@ -1,4 +1,3 @@
-from cmath import inf
 import inspect
 import os
 from collections import OrderedDict
@@ -87,19 +86,19 @@ class TensorboardCallback(BaseCallback):
     def __init__(self, verbose=0):
         self._best_reward = 0
 
-        self.max_hip_torque = float(-inf)
-        self.min_hip_torque = float(inf)
-        self.max_leg_torque = float(-inf)
-        self.min_leg_torque = float(inf)
+        self.max_hip_torque = float("-inf")
+        self.min_hip_torque = float("inf")
+        self.max_leg_torque = float("-inf")
+        self.min_leg_torque = float("inf")
 
 
-        self.max_hip_velocity = float(-inf)
-        self.min_hip_velocity = float(inf)
-        self.max_leg_velocity = float(-inf)
-        self.min_leg_velocity = float(inf)
+        self.max_hip_velocity = float("-inf")
+        self.min_hip_velocity = float("inf")
+        self.max_leg_velocity = float("-inf")
+        self.min_leg_velocity = float("inf")
 
-        self.max_foot_pos = float(-inf)
-        self.min_foot_pos = float(inf)
+        self.max_foot_pos = float("-inf")
+        self.min_foot_pos = float("inf")
 
         super(TensorboardCallback, self).__init__(verbose)
 

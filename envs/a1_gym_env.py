@@ -1,5 +1,4 @@
 """Wrapper to make the a1 environment suitable for OpenAI gym."""
-from unittest import result
 import gym
 
 from envs import env_builder
