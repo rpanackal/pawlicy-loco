@@ -106,18 +106,18 @@ class Trainer:
                                             log_path=self._exp_dir,
                                             eval_freq=eval_frequency,
                                             deterministic=True,
-                                            render=False)
+                                            render=self._args.visualize)
             callbacks = CallbackList([eval_callback, utils.TensorboardCallback()])
 
             self._model.learn(n_timesteps,
-                                log_interval=10,
+                                log_interval=100,
                                 eval_env=self._eval_env,
                                 eval_freq=eval_frequency,
                                 reset_num_timesteps=False,
                                 callback=callbacks)
         else:
             self._model.learn(n_timesteps,
-                                log_interval=10,
+                                log_interval=100,
                                 reset_num_timesteps=False,
                                 callback=utils.TensorboardCallback())
 

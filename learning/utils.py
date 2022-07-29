@@ -98,10 +98,13 @@ class TensorboardCallback(BaseCallback):
         self.max_leg_velocity = float(-inf)
         self.min_leg_velocity = float(inf)
 
+        self.max_foot_pos = float(-inf)
+        self.min_foot_pos = float(inf)
+
         super(TensorboardCallback, self).__init__(verbose)
 
     def _on_training_start(self):
-        self._log_freq = 10  # log every 100 calls
+        self._log_freq = 100  # log every 100 calls
 
         output_formats = self.logger.output_formats
         # Save reference to tensorboard formatter object
@@ -113,6 +116,7 @@ class TensorboardCallback(BaseCallback):
 
         self._set_max_min_veocities(local_env)
         self._set_max_min_torques(local_env)
+        self._set_max_min_foot_positions(local_env)
 
         # Find the best reward
         reward = np.max(np.array(local_env.episode_returns)) if len(local_env.episode_returns) > 0 else 0
@@ -162,20 +166,22 @@ class TensorboardCallback(BaseCallback):
             # self.tb_formatter.writer.add_scalar("upper_rear_left_velocity", local_env.robot.GetMotorVelocities()[10], self.num_timesteps)
             # self.tb_formatter.writer.add_scalar("lower_rear_left_velocity", local_env.robot.GetMotorVelocities()[11], self.num_timesteps)
 
-            foot_pos = local_env.robot.GetFootPositionsInBaseFrame().ravel()
+            # foot_pos = local_env.robot.GetFootPositionsInBaseFrame().ravel()
+            # self.tb_formatter.writer.add_scalar("front_right_foot_x", foot_pos[0], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("front_right_foot_y", foot_pos[1], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("front_right_foot_z", foot_pos[2], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("front_left_foot_x", foot_pos[3], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("front_left_foot_y", foot_pos[4], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("front_left_foot_z", foot_pos[5], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_right_foot_x", foot_pos[6], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_right_foot_y", foot_pos[7], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_right_foot_z", foot_pos[8], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_left_foot_x", foot_pos[9], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_left_foot_y", foot_pos[10], self.num_timesteps)
+            # self.tb_formatter.writer.add_scalar("rear_left_foot_z", foot_pos[11], self.num_timesteps)
 
-            self.tb_formatter.writer.add_scalar("front_right_foot_x", foot_pos[0], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("front_right_foot_y", foot_pos[1], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("front_right_foot_z", foot_pos[2], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("front_left_foot_x", foot_pos[3], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("front_left_foot_y", foot_pos[4], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("front_left_foot_z", foot_pos[5], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_right_foot_x", foot_pos[6], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_right_foot_y", foot_pos[7], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_right_foot_z", foot_pos[8], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_left_foot_x", foot_pos[9], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_left_foot_y", foot_pos[10], self.num_timesteps)
-            self.tb_formatter.writer.add_scalar("rear_left_foot_z", foot_pos[11], self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("max_foot_pos", self.max_foot_pos, self.num_timesteps)
+            self.tb_formatter.writer.add_scalar("min_foot_pos", self.min_foot_pos, self.num_timesteps)
 
             self.tb_formatter.writer.add_scalar("best_reward", self._best_reward, self.num_timesteps)
             self.tb_formatter.writer.flush()
@@ -207,3 +213,11 @@ class TensorboardCallback(BaseCallback):
                     self.max_leg_velocity = velocity
                 if velocity < self.min_leg_velocity:
                     self.min_leg_velocity = velocity
+    
+    def _set_max_min_foot_positions(self, local_env):
+        foot_pos = local_env.robot.GetFootPositionsInBaseFrame().ravel()
+        for i, pos in enumerate(foot_pos):
+                if pos > self.max_foot_pos:
+                    self.max_foot_pos = pos
+                if pos < self.min_foot_pos:
+                    self.min_foot_pos = pos

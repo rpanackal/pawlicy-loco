@@ -117,19 +117,19 @@ class WalkAlongX(object):
         #displacement_reward = self._current_base_pos - self._last_base_pos)
         forward_reward =  self._forward_weight * (self._current_base_pos[0] - self._init_base_pos[0])
         #pose_reward = self._pose_weight * self._current_base_pos[2]
-        #orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
-        drift_reward =  - self._drift_weight * abs(self._current_base_pos[1])
+        orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
+        drift_reward =  - self._drift_weight * (self._current_base_pos[1])**2
         
-        orientation = env.robot.GetBaseOrientation()
-        rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
-        local_up_vec = rot_matrix[6:]
-        shake_reward = - self._shake_weight * abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
+        # orientation = env.robot.GetBaseOrientation()
+        # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
+        # local_up_vec = rot_matrix[6:]
+        # shake_reward = - self._shake_weight * abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         # orientation = env.robot.GetBaseOrientation()
         # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         
-        reward =  forward_reward + shake_reward + self._step_weight + velocity_reward + drift_reward
+        reward =  forward_reward + velocity_reward + drift_reward + orientation_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)

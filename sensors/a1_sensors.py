@@ -15,8 +15,11 @@ JOINT_MAX_FORCES = [20, 55, 55] * NUM_LEGS
 OBSERVED_VELOCITY_LOW = [-100] * NUM_MOTORS
 OBSERVED_VELOCITY_HIGH = [100] * NUM_MOTORS
 
-OBSERVED_TORQUE_LOW = [-100, -700, -700] * NUM_LEGS
-OBSERVED_TORQUE_HIGH = [100, 300, 300] * NUM_LEGS
+OBSERVED_TORQUE_LOW = [-100, -100, -100] * NUM_LEGS
+OBSERVED_TORQUE_HIGH = [100, 100, 100] * NUM_LEGS
+
+OBSERVED_FOOT_POS_LOW = [-1, -1, -1] * NUM_LEGS
+OBSERVED_FOOT_POS_HIGH = [1, 1, 1] * NUM_LEGS
 #JOINT_MAX_TORQUE = 50
 
 class MotorVelocitySensor(sensor.BoxSpaceSensor):
@@ -73,5 +76,26 @@ class MotorTorqueSensor(sensor.BoxSpaceSensor):
         else:
             motor_torques = self._robot.GetTrueMotorTorques()
 
+        return motor_torques
+
+class FootPositionSensor(sensor.BoxSpaceSensor):
+    def __init__(self,
+        num_feet: int = NUM_LEGS,
+        name: typing.Text = "FootPosition", 
+        lower_bound: _FLOAT_OR_ARRAY = OBSERVED_FOOT_POS_LOW,
+        upper_bound: _FLOAT_OR_ARRAY = OBSERVED_FOOT_POS_HIGH, 
+        dtype: typing.Type[typing.Any] = np.float64) -> None:
+
+        self._num_feet = num_feet
+
+        super(MotorTorqueSensor, self).__init__(
+            name=name, 
+            shape=(num_feet * 3,), 
+            lower_bound=lower_bound, 
+            upper_bound=upper_bound, 
+            dtype=dtype)
+    
+    def _get_observation(self) -> _ARRAY:
+        motor_torques = self._robot.GetFootPositionsInBaseFrame().ravel()
         return motor_torques
 

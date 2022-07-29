@@ -19,10 +19,7 @@ class A1GymEnv(gym.Env):
     self.enable_rendering = enable_rendering
 
   def step(self, action):
-    results = self._env.step(action)
-
-    foot_pos = self._env.robot.GetFootPositionsInBaseFrame()
-    return results
+    return self._env.step(action)
 
   def reset(self):
     return self._env.reset()
