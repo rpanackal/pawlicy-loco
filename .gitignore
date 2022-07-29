@@ -1,4 +1,6 @@
 __pycache__
+*.pyc
 
 locomotion_simulation
 agents/
+

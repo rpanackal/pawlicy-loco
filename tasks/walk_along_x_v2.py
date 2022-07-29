@@ -89,7 +89,7 @@ class WalkAlongX(object):
             If the robot base becomes unstable (based on orientation), the episode
             terminates early.
         """
-        return not self.is_healthy
+        return bool(self.is_fallen(env))
 
 
     def reward(self, env):

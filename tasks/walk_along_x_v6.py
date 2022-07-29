@@ -4,12 +4,12 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 12,
-                distance_weight: float = 0.1,
+                velocity_weight: float = 10,
+                distance_weight: float = 0.02,
                 forward_weight : float = 0.01,
-                step_weight : float = 5,
+                step_weight : float = 1,
                 # energy_weight=0.0005,
-                shake_weight: float = 0.05,
+                shake_weight: float = 1,
                 drift_weight: float = 0.5,
                 orientation_weight : float = 10,
                 pose_weight : float = 10,
@@ -46,7 +46,7 @@ class WalkAlongX(object):
 
         self.step_counter = 0
         self.max_vel = 0
-        self._target_pos =  np.array([10, 0, 1])
+        self._target_pos =  np.array([100, 0, 1])
 
     def __call__(self, env):
         return self.reward(env)
@@ -103,8 +103,8 @@ class WalkAlongX(object):
     def reward(self, env):
 
         # bug : -ve velocity along y is rewarded
-        # velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
-        #x_velocity_reward = self._velocity_weight * self._current_base_vel[0]
+        #velocity_reward = np.dot([1, -1, 0], self._current_base_vel)
+        velocity_reward = self._velocity_weight * self._current_base_vel[0]
         # forward_reward = self._distance_weight * self._current_base_pos[0] - self._init_base_pos[0]
         # displacement_reward = self._current_base_pos[0] - self._last_base_pos[0]
 
@@ -112,24 +112,25 @@ class WalkAlongX(object):
         # action_reward = -self._action_cost_weight * np.linalg.norm(self._last_action) / 12
         
         
-        velocity_reward = self._velocity_weight * self._current_base_vel[0]
+        #velocity_reward = self._velocity_weight * self._current_base_vel[0]
         #distance_reward = - self._distance_weight * np.linalg.norm(self._target_pos - self._current_base_pos)
         #displacement_reward = self._current_base_pos - self._last_base_pos)
-        forward_reward =  self._forward_weight * (self._current_base_pos[0] - self._init_base_pos[0])
+        #forward_reward =  self._forward_weight * (self._current_base_pos[0] - self._init_base_pos[0])
         #pose_reward = self._pose_weight * self._current_base_pos[2]
-        orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
-        drift_reward =  - self._drift_weight * (self._current_base_pos[1])**2
+        #orientation_reward = - self._orientation_weight * np.linalg.norm(env.robot.GetTrueBaseRollPitchYaw() - self._init_base_ori_euler)
+        drift_reward =  - self._drift_weight * (self._current_base_pos[1]) ** 2
         
         # orientation = env.robot.GetBaseOrientation()
         # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
         # local_up_vec = rot_matrix[6:]
         # shake_reward = - self._shake_weight * abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
+    
         # orientation = env.robot.GetBaseOrientation()
         # rot_matrix = env.robot._pybullet_client.getMatrixFromQuaternion(orientation)
         # local_up_vec = rot_matrix[6:]
         # shake_reward = -abs(np.dot(np.asarray([1, 1, 0]), np.asarray(local_up_vec)))
         
-        reward =  forward_reward + velocity_reward + drift_reward + orientation_reward
+        reward = velocity_reward + drift_reward
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
