@@ -85,7 +85,7 @@ class Trainer:
             lr_scheduler_args = {
                 "lr_type": scheduler_type,
                 "total_timesteps": n_timesteps,
-                "final_value": 3e-5
+                "final_value": 3e-6
             }
 
         tensorboard_log_dir = os.path.join(self._exp_dir, "logs")
