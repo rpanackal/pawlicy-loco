@@ -15,7 +15,7 @@ class WalkAlongX(object):
                 pose_weight : float = 1,
                 #action_cost_weight: float = 0.02,
                 # deviation_weight: float = 1,
-                enable_roll_limit : bool = False,
+                enable_roll_limit : bool = True,
                 healthy_roll_limit : float = np.pi * 1/2,
                 # roll_threshold: float = np.pi * 1/2,
                 # pitch_threshold: float = 0.8,
