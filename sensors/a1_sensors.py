@@ -23,6 +23,9 @@ OBSERVED_FOOT_POS_HIGH = [1, 1, 1] * NUM_LEGS
 
 OBSERVED_ACCELERATION_LOW = -100
 OBSERVED_ACCELERATION_HIGH = 100
+
+OBSERVED_VEL_SHIFT_LOW = -200
+OBSERVED_VEL_SHIFT_HIGH = 200
 #JOINT_MAX_TORQUE = 50
 
 class MotorVelocitySensor(sensor.BoxSpaceSensor):
@@ -119,8 +122,8 @@ class BaseAccelerationSensor(sensor.BoxSpaceSensor):
         super(BaseAccelerationSensor, self).__init__(
             name=name, 
             shape=(self._num_channels,), 
-            lower_bound=[lower_bound] * self._num_channels, 
-            upper_bound=[upper_bound] * self._num_channels, 
+            lower_bound=lower_bound, 
+            upper_bound=upper_bound, 
             dtype=dtype)
         
         datatype = [("{}_{}".format(name, channel), self._dtype)
@@ -150,6 +153,63 @@ class BaseAccelerationSensor(sensor.BoxSpaceSensor):
         accel = (self._current_velocity - self._last_velocity) / self._robot.time_step
 
         return accel
+    
+    def on_reset(self, env):
+        self._last_velocity = np.zeros(self._num_channels)
+        self._current_velocity = np.zeros(self._num_channels)
+
+    def on_step(self, env):
+        self._last_velocity = self._current_velocity
+        self._current_velocity = np.array(self._robot.GetBaseVelocity())
+
+class BaseVelocityShiftSensor(sensor.BoxSpaceSensor):
+    """A Sensor that reads vase velocities and returns base acceleration"""    
+
+    def __init__(self,
+                num_motors: int = NUM_MOTORS,
+                name: typing.Text = "BaseAcceleration", 
+                lower_bound: _FLOAT_OR_ARRAY = OBSERVED_VEL_SHIFT_LOW,
+                upper_bound: _FLOAT_OR_ARRAY = OBSERVED_VEL_SHIFT_HIGH, 
+                dtype: typing.Type[typing.Any] = np.float64) -> None:
+
+        
+        self._channels = ["x", "y", "z"]
+        self._num_channels = len(self._channels)
+
+        super(BaseVelocityShiftSensor, self).__init__(
+            name=name, 
+            shape=(self._num_channels,), 
+            lower_bound=lower_bound, 
+            upper_bound=upper_bound, 
+            dtype=dtype)
+        
+        datatype = [("{}_{}".format(name, channel), self._dtype)
+                for channel in self._channels]
+        self._datatype = datatype
+
+        self._num_motors = num_motors
+        self._last_velocity = np.zeros(self._num_channels)
+        self._current_velocity = np.zeros(self._num_channels)
+
+        
+        
+    def get_channels(self) -> typing.Iterable[typing.Text]:
+        """Returns channels (displacement in x, y, z direction)."""
+        return self._channels
+
+    def get_num_channels(self) -> int:
+        """Returns number of channels."""
+        return self._num_channels
+
+    def get_observation_datatype(self) -> _DATATYPE_LIST:
+        """See base class."""
+        return self._datatype
+        
+    def _get_observation(self) -> _ARRAY:
+
+        #accel = (self._current_velocity - self._last_velocity) / self._robot.time_step
+        shift = (self._current_velocity - self._last_velocity)
+        return shift
     
     def on_reset(self, env):
         self._last_velocity = np.zeros(self._num_channels)

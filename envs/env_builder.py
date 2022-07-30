@@ -48,7 +48,8 @@ def build_regular_env(args,
 
     sensors = [
         #robot_sensors.BaseDisplacementSensor(dtype=np.float32),
-        a1_sensors.BaseAccelerationSensor(dtype=np.float32),
+        #a1_sensors.BaseAccelerationSensor(dtype=np.float32),
+        a1_sensors.BaseVelocityShiftSensor(dtype=np.float32),
         robot_sensors.IMUSensor(dtype=np.float32, channels=['R', 'P', 'Y', 'dR', 'dP', 'dY']),
         #robot_sensors.PoseSensor(dtype=np.float32),
         #a1_sensors.FootPositionSensor(dtype=np.float32), 

@@ -69,7 +69,7 @@ class Trainer:
         if n_timesteps is None:
             raise ValueError("The hyperparameter 'n_timesteps' is missing.")
         eval_frequency = hyperparameters.pop("eval_freq", 5000)
-        scheduler_type = hyperparameters.pop("learning_rate_scheduler", None)
+        scheduler_type = hyperparameters.pop("learning_rate_scheduler", "cosine")
         lr = hyperparameters.pop("learning_rate", float(1e-3))
         noise_type = hyperparameters.pop("noise_type", "normal")
         noise_std = hyperparameters.pop("noise_std", 0.0)
@@ -84,7 +84,8 @@ class Trainer:
         if scheduler_type is not None:
             lr_scheduler_args = {
                 "lr_type": scheduler_type,
-                "total_timesteps": n_timesteps
+                "total_timesteps": n_timesteps,
+                "final_value": 3e-5
             }
 
         tensorboard_log_dir = os.path.join(self._exp_dir, "logs")

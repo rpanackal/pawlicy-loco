@@ -1,6 +1,7 @@
 import inspect
 import os
 from collections import OrderedDict
+from sched import scheduler
 from typing import Any, Callable, Dict, Tuple, Union
 
 import numpy as np
@@ -11,7 +12,10 @@ from stable_baselines3.common.logger import TensorBoardOutputFormat
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
 # Got this from rl-zoo
-def lr_schedule(initial_value: Union[float, str], lr_type: str, total_timesteps: Union[int, None] = None) -> Callable[[float], float]:
+def lr_schedule(initial_value: Union[float, str], 
+                lr_type: str, 
+                final_value: Union[float, str] = 1e5, 
+                total_timesteps: Union[int, None] = None) -> Callable[[float], float]:
     """
     Learning rate scheduler that is configured.
     
@@ -23,25 +27,36 @@ def lr_schedule(initial_value: Union[float, str], lr_type: str, total_timesteps:
         (function): the scheduler function
     """
     lr_type = lr_type
-    timesteps = total_timesteps
     if isinstance(initial_value, str):
         initial_value = float(initial_value)
 
-    def func(progress_remaining: float) -> float:
-        """
-        The new learning rate
-        Args:
-            progress_remaining: The progress remaining - will decrease from 1 (beginning) to 0
-        Returns:
-            (float)
-        """
-        # Cosine Annealing
-        if lr_type == "cosine":
-            assert timesteps is not None, "Total timesteps required for 'cosine' learning rate scheduler."
-            T_max = 1.0 - (total_timesteps * 0.5)/total_timesteps # The maximum progress - currently 10% of the total
-            return np.max(0.5 * (1 + np.cos(progress_remaining / T_max * np.pi)) * initial_value, int(1e-5))
-        # Linear
-        else:
+    if lr_type == "cosine":
+        if isinstance(final_value, str):
+            final_value = float(final_value)
+        iters = np.arange(total_timesteps)
+        schedule = final_value + 0.5 * (initial_value - final_value) * (1 + np.cos(np.pi * iters / len(iters)))
+
+        print(f"Learning Rate Scheduler : cosine, initial value : {schedule[0]}, final value : {schedule[-1]}")
+
+        def func(progress_remaining: float) -> float:
+            """
+            The new learning rate
+            Args:
+                progress_remaining: The progress remaining - will decrease from 1 (beginning) to 0
+            Returns:
+                (float)
+            """
+            idx = int((1 - progress_remaining) *  (total_timesteps - 1))
+            return schedule[idx]
+    else:
+        def func(progress_remaining: float) -> float:
+            """
+            The new learning rate
+            Args:
+                progress_remaining: The progress remaining - will decrease from 1 (beginning) to 0
+            Returns:
+                (float)
+            """
             return np.max(progress_remaining * initial_value, int(1e-5))
 
     return func
@@ -220,3 +235,9 @@ class TensorboardCallback(BaseCallback):
                     self.max_foot_pos = pos
                 if pos < self.min_foot_pos:
                     self.min_foot_pos = pos
+
+if  __name__ == "__main__":
+    scheduler = lr_schedule(3e-4, "cosine", 3e-5, 50000)
+    print(scheduler(1))
+    print(scheduler(0))
+
