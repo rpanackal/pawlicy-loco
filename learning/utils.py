@@ -235,9 +235,3 @@ class TensorboardCallback(BaseCallback):
                     self.max_foot_pos = pos
                 if pos < self.min_foot_pos:
                     self.min_foot_pos = pos
-
-if  __name__ == "__main__":
-    scheduler = lr_schedule(3e-4, "cosine", 3e-5, 50000)
-    print(scheduler(1))
-    print(scheduler(0))
-
