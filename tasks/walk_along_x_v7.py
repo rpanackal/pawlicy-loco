@@ -4,12 +4,12 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 20,
+                velocity_weight: float = 10,
                 distance_weight: float = 0.02,
                 forward_weight : float = 1,
                 step_weight : float = 0.223,
                 # energy_weight=0.0005,
-                displacement_weight : float = 2,
+                displacement_weight : float = 4,
                 shake_weight: float = 1,
                 drift_weight: float = 6,
                 orientation_weight : float = 1,
@@ -104,13 +104,6 @@ class WalkAlongX(object):
         """
         rot_quat = env.robot.GetBaseOrientation()
         rot_mat = env.pybullet_client.getMatrixFromQuaternion(rot_quat)
-
-        if rot_mat[-1]>self.max_ori:
-            self.max_ori = rot_mat[-1]
-            print(f"MAXIMUM ORI IS {self.max_ori}")
-        if rot_mat[-1]<self.min_ori:
-            self.min_ori = rot_mat[-1]
-            print(f"minimum ori is {self.min_ori}")
         return rot_mat[-1] < 0.85
 
 
