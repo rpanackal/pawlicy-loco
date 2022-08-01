@@ -1,5 +1,9 @@
 import numpy as np
 
+"""
+This task to be used after setting action limits to 0.5 in all 3 motors of a leg
+"""
+
 class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
