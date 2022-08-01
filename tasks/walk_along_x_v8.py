@@ -11,7 +11,7 @@ class WalkAlongX(object):
                 # energy_weight=0.0005,
                 displacement_weight : float = 800,
                 shake_weight: float = 1,
-                drift_weight: float = 6,
+                drift_weight: float = 50,
                 orientation_weight : float = 1,
                 pose_weight : float = 1,
                 action_cost_weight: float = 0.0004,
@@ -135,8 +135,8 @@ class WalkAlongX(object):
         rot_quat = env.robot.GetBaseOrientation()
         rot_mat = env.pybullet_client.getMatrixFromQuaternion(rot_quat)
         orientation_reward = self._orientation_weight * rot_mat[-1] ** 2
-        #print(f"displacement {displacement_reward} action {action_reward} orientation {orientation_reward}")
-        reward = displacement_reward + action_reward + orientation_reward # + self._step_weight + drift_reward 
+        print(f"displacement {displacement_reward} action {action_reward} orientation {orientation_reward} drift {drift_reward}")
+        reward = displacement_reward + action_reward + orientation_reward + drift_reward # + self._step_weight 
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
