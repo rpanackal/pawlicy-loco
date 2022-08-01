@@ -4,17 +4,17 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 #forward_reward_cap: float = float("inf"),
-                velocity_weight: float = 10,
+                velocity_weight: float = 32,
                 distance_weight: float = 0.02,
                 forward_weight : float = 1,
                 step_weight : float = 0.223,
                 # energy_weight=0.0005,
-                displacement_weight : float = 40,
+                displacement_weight : float = 4,
                 shake_weight: float = 1,
                 drift_weight: float = 6,
                 orientation_weight : float = 1,
                 pose_weight : float = 1,
-                action_cost_weight: float = 0.02,
+                action_cost_weight: float = 0.0004,
                 # deviation_weight: float = 1,
                 enable_roll_limit : bool = True,
                 healthy_roll_limit : float = np.pi * 1/2,
@@ -134,9 +134,9 @@ class WalkAlongX(object):
     
         rot_quat = env.robot.GetBaseOrientation()
         rot_mat = env.pybullet_client.getMatrixFromQuaternion(rot_quat)
-        orientation_reward = - self._orientation_weight * (1 - rot_mat[-1]) ** 2
-        
-        reward = displacement_reward + action_reward + self._step_weight + drift_reward + orientation_reward
+        orientation_reward = self._orientation_weight * rot_mat[-1] ** 2
+        #print(f"displacement {displacement_reward} action {action_reward} orientation {orientation_reward}")
+        reward = displacement_reward + action_reward + orientation_reward # + self._step_weight + drift_reward 
             #+ shake_reward # + y_velocity_reward + forward_reward + displacement_reward + action_reward \
                   #
         #print("Reward", reward)
