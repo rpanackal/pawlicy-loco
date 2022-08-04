@@ -19,7 +19,7 @@ importlib-metadata==4.12.0
 importlib-resources==5.8.0
 kiwisolver==1.4.4
 llvmlite==0.38.1
--e git+git@github.com:yxyang/locomotion_simulation.git@d2af9d7dbee93130541d6415b222fa672dc5913f#egg=locomotion_simulation
+git+https://github.com/yxyang/locomotion_simulation@master#egg=locomotion_simulation
 Markdown==3.4.1
 matplotlib==3.5.2
 numba==0.55.2
