@@ -69,7 +69,7 @@ class Trainer:
         if n_timesteps is None:
             raise ValueError("The hyperparameter 'n_timesteps' is missing.")
         eval_frequency = hyperparameters.pop("eval_freq", 5000)
-        scheduler_type = hyperparameters.pop("learning_rate_scheduler", "cosine")
+        scheduler_type = hyperparameters.pop("learning_rate_scheduler", None)
         lr = hyperparameters.pop("learning_rate", float(1e-3))
         noise_type = hyperparameters.pop("noise_type", "normal")
         noise_std = hyperparameters.pop("noise_std", 0.0)

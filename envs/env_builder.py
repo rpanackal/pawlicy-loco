@@ -6,7 +6,7 @@ from locomotion.envs import locomotion_gym_env
 from locomotion.envs.env_wrappers import observation_dictionary_to_array_wrapper as obs_dict_to_array_wrapper
 from locomotion.envs.env_wrappers import trajectory_generator_wrapper_env, simple_openloop
 
-from tasks import walk_along_x, default_task, walk_along_x_v3, walk_along_x_v4, walk_along_x_v7, walk_along_x_v8, walk_along_x_v6
+from tasks import  default_task, walk_along_x_v8, walk_along_x_v10
 from robots import a1_v2
 from sensors import a1_sensors
 import numpy as np
@@ -58,7 +58,7 @@ def build_regular_env(args,
         a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
 
-    task = walk_along_x_v8.WalkAlongX()
+    task = walk_along_x_v10.WalkAlongX()
 
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,
