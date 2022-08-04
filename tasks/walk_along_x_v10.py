@@ -8,7 +8,7 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 step_weight : float = 0.223,
-                displacement_weight : float = 800,
+                displacement_weight : float = 600,
                 drift_weight: float = 16,
                 orientation_weight : float = 1,
                 action_cost_weight: float = 0.0004,
@@ -68,7 +68,7 @@ class WalkAlongX(object):
 
     def reward(self, env):
         
-        displacement_reward = self._displacement_weight * (self._current_base_pos[0] - self._last_base_pos[0])
+        displacement_reward = self._displacement_weight * (self._current_base_pos[0] - self._last_base_pos[0]) if abs(self._current_base_pos[1]) < 0.25 else 0
 
         action_reward = - self._action_cost_weight * np.linalg.norm(self._last_action)
 
