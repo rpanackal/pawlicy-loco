@@ -47,9 +47,9 @@ def build_regular_env(args,
       simulation_parameters=sim_params)
 
     sensors = [
-        #robot_sensors.BaseDisplacementSensor(dtype=np.float32),
+        robot_sensors.BaseDisplacementSensor(dtype=np.float32),
         #a1_sensors.BaseAccelerationSensor(dtype=np.float32),
-        a1_sensors.BaseVelocityShiftSensor(dtype=np.float32),
+        #a1_sensors.BaseVelocityShiftSensor(dtype=np.float32),
         robot_sensors.IMUSensor(dtype=np.float32, channels=['R', 'P', 'Y', 'dR', 'dP', 'dY']),
         #robot_sensors.PoseSensor(dtype=np.float32),
         #a1_sensors.FootPositionSensor(dtype=np.float32), 
@@ -58,7 +58,7 @@ def build_regular_env(args,
         a1_sensors.MotorTorqueSensor(dtype=np.float32)
     ]
 
-    task = walk_along_x_v10.WalkAlongX()
+    task = walk_along_x_v8.WalkAlongX()
 
 
     env = locomotion_gym_env.LocomotionGymEnv(gym_config=gym_config,

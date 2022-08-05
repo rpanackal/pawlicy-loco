@@ -182,13 +182,26 @@ class Trainer:
             env: The gym environment to test the agent on.
         """
         self._model = self.load_model(exp_name, model_path)
+        returns = []
+        eps_lengths = []
 
         for i in range(self._args.total_num_eps):
             done = False
+            step_counter = 0
+            ep_return = 0 
             obs = self._env.reset()
             while not done:
                 action, _states = self._model.predict(obs, deterministic=True)
                 obs, reward, done, info = self._env.step(action)
+                ep_return += reward
+                step_counter += 1
+            
+            returns.append(ep_return)
+            eps_lengths.append(step_counter)
+        
+        print()
+        print(f"Mean return is {np.mean(returns):.2f} +/- {np.std(returns):.2f}") 
+        print(f"Mean episode length is  {np.mean(eps_lengths):.2f} +/- {np.std(eps_lengths):.2f}")
 
     def random(self):
         """

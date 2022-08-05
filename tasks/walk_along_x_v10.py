@@ -8,7 +8,7 @@ class WalkAlongX(object):
     """Task to walk along a straight line (x-axis)"""
     def __init__(self,
                 step_weight : float = 0.223,
-                displacement_weight : float = 600,
+                displacement_weight : float = 400,
                 drift_weight: float = 16,
                 orientation_weight : float = 1,
                 action_cost_weight: float = 0.0004,
