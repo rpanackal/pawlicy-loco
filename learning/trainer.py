@@ -1,7 +1,7 @@
 import os
 import datetime
 from gym.wrappers import TimeLimit
-from stable_baselines3 import SAC, PPO, TD3
+from stable_baselines3 import SAC, PPO, TD3, DDPG
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
@@ -13,7 +13,7 @@ import numpy as np
 from envs.wrappers.normalize_actions_wrapper import NormalizeActionWrapper
 from learning import utils
 
-ALGORITHMS = {"SAC": SAC, "PPO": PPO, "TD3": TD3}
+ALGORITHMS = {"SAC": SAC, "PPO": PPO, "TD3": TD3, "DDPG": DDPG}
 
 
 class Trainer:
@@ -75,11 +75,13 @@ class Trainer:
         noise_std = hyperparameters.pop("noise_std", 0.0)
 
         # The noise objects for TD3
-        if self._algorithm == "TD3":
+        if self._algorithm == "TD3" or self._algorithm == "DDPG":
             policy_kwargs = dict(net_arch=[400, 300])
             if noise_type == "normal":
                 action_noise = NormalActionNoise(mean=np.zeros(12), sigma=noise_std * np.ones(12))
-
+            # Add these to the hyperparameters
+            hyperparameters.update({"action_noise": action_noise, "policy_kwargs": policy_kwargs})
+        
         # Setup up learning rate scheduler arguments, if needed
         if scheduler_type is not None:
             lr_scheduler_args = {
@@ -92,11 +94,9 @@ class Trainer:
          # Use the appropriate algorithm
         self._model = ALGORITHMS[self._algorithm](env=self._env,
                                                     verbose=1,
-                                                    action_noise=action_noise if self._algorithm == "TD3" else None,
                                                     learning_rate=utils.lr_schedule(lr, **lr_scheduler_args) if scheduler_type is not None else lr,
                                                     tensorboard_log=tensorboard_log_dir,
-                                                    **hyperparameters,
-                                                    policy_kwargs=policy_kwargs if self._algorithm == "TD3" else None)
+                                                    **hyperparameters)
 
 
         # Train the model (check if evaluation is needed)
