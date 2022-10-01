@@ -4,7 +4,7 @@ import numpy as np
 
 URDF_FILENAME = "a1/a1.urdf"
 
-class A1V2(A1):
+class A1_loco(A1):
     def __init__(self, 
         pybullet_client, 
         urdf_filename=URDF_FILENAME,
